@@ -114,7 +114,7 @@ class SearchEngine:
             self.t.save('../output/table.json')
     
     def load(self):
-        self.t.load('../output/test.json')
+        self.t.load('tests/test.json')
 
 if __name__ == '__main__':
     e = SearchEngine()
