@@ -1,6 +1,6 @@
 import sys
 
-sys.path.append('../src')
+sys.path.append('src')
 
 from bool_search import BoolSearchEngine
 
