@@ -19,3 +19,6 @@ class BoolSearchEngine(SearchEngine, BoolExpCalculator):
     
     def search(self, exp):
         return self.parser.parse(exp)
+
+if __name__ == '__main__':
+    b = BoolSearchEngine()

@@ -68,25 +68,30 @@ class InvertedIndexTable:
             else:
                 self.table[token] = {id}
 
-    def save(self, filename):
-        self.table = {
-            key : list(sorted(value)) for (key, value) in self.table.items()
-        }
-        with open(filename, 'w') as f:
-            dump = json.dumps(
-                self.table,
-                sort_keys = True,
-                indent = 4,
-                separators = (',', ': ')
-            )
-            f.write(dump)
+    # def save(self, filename):
+    #     self.table = {
+    #         key : list(sorted(value)) for (key, value) in self.table.items()
+    #     }
+    #     with open(filename, 'w') as f:
+    #         dump = json.dumps(
+    #             self.table,
+    #             sort_keys = True,
+    #             indent = 4,
+    #             separators = (',', ': ')
+    #         )
+    #         f.write(dump)
     
-    def load(self, filename):
-        with open(filename, 'r', encoding='UTF-8') as f:
-            self.table = json.load(f)
-            for value in self.table.values():
-                for item in value:
-                    self.universe.add(item)
+    # def load(self, filename):
+    #     with open(filename, 'r', encoding='UTF-8') as f:
+    #         self.table = json.load(f)
+    #         for value in self.table.values():
+    #             for item in value:
+    #                 self.universe.add(item)
+
+    def fromIndexTable(self, indexTable):
+        self.table = {}
+        for (id, tokens) in indexTable.items():
+                self.insert(tokens.keys(), id)
 
     def getIDF(self):
         IDF = {
@@ -109,6 +114,20 @@ class IndexTable:
                 counter[token] = 1
         self.table[id] = counter
 
+    def save(self, filename):
+        with open(filename, 'w') as f:
+            dump = json.dumps(
+                self.table,
+                sort_keys = True,
+                indent = 4,
+                separators = (',', ': ')
+            )
+            f.write(dump)
+
+    def load(self, filename):
+        with open(filename, 'r', encoding='UTF-8') as f:
+            self.table = json.load(f)
+
     def getTF(self):
         TF = {
             id : {
@@ -121,6 +140,7 @@ class IndexTable:
 class SearchEngine:
 
     def __init__(self):
+        self.indexTable = IndexTable()
         self.invertedIndexTable = InvertedIndexTable()
     
     def generate(self):
@@ -140,12 +160,14 @@ class SearchEngine:
                     p.tokenize()
                     p.lemmatize()
                     p.deleteStopwords()
+                    self.indexTable.insert(p.id, p.tokens)
                     self.invertedIndexTable.insert(p.tokens, p.id)
         finally:
-            self.invertedIndexTable.save('../output/table.json')
+            self.indexTable.save('../output/table.json')
     
     def load(self):
-        self.invertedIndexTable.load('tests/test.json')
+        self.indexTable.load('tests/test.json')
+        self.invertedIndexTable.fromIndexTable(self.indexTable.table)
 
 if __name__ == '__main__':
     e = SearchEngine()

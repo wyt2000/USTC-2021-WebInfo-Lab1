@@ -4,7 +4,10 @@ import ply.yacc as yacc
 class BoolExpCalculator:
 
     def __init__(self, table, universe):
-        self.table = table
+        self.table = {
+            key : sorted(value)
+            for (key, value) in table.items()
+        }
         self.universe = sorted(list(universe))
         self.generateParser()
 
