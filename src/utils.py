@@ -73,6 +73,19 @@ class InvertedIndexTable:
         for (id, tokens) in indexTable.items():
                 self.insert(tokens.keys(), id)
 
+    def save(self, filename):
+        self.table = {
+            key: list(sorted(value)) for (key, value) in self.table.items()
+        }
+        with open(filename, 'w') as f:
+            dump = json.dumps(
+                self.table,
+                sort_keys=True,
+                indent=4,
+                separators=(',', ': ')
+            )
+            f.write(dump)
+
     def getIDF(self):
         IDF = {
             token : math.log(len(self.universe) / (len(self.table[token]) + 1))
@@ -143,10 +156,10 @@ class SearchEngine:
                     self.indexTable.insert(p.id, p.tokens)
                     self.invertedIndexTable.insert(p.tokens, p.id)
         finally:
-            self.indexTable.save('../output/table.json')
+            self.invertedIndexTable.save('../output/table.json')
     
     def load(self):
-        self.indexTable.load('tests/test.json')
+        self.indexTable.load('../output/table.json')
         self.invertedIndexTable.fromIndexTable(self.indexTable.table)
 
 if __name__ == '__main__':
