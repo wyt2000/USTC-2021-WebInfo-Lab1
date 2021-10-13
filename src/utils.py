@@ -89,12 +89,12 @@ class InvertedIndexTable:
 class SearchEngine:
 
     def __init__(self):
-        self.t = InvertedIndexTable()
+        self.invertedIndexTable = InvertedIndexTable()
     
     def generate(self):
         p = Preprocessor()
-        self.t.table = {
-            key: set(value) for (key, value) in self.t.table.items()
+        self.invertedIndexTable.table = {
+            key: set(value) for (key, value) in self.invertedIndexTable.table.items()
         }
         os.chdir('../dataset')
         datelist = os.listdir('.')
@@ -104,17 +104,17 @@ class SearchEngine:
                 for file in filelist:
                     fullpath = f'{date}/{file}'
                     print(fullpath)
-                    self.t.universe.add(fullpath)
+                    self.invertedIndexTable.universe.add(fullpath)
                     p.load(fullpath)
                     p.tokenize()
                     p.lemmatize()
                     p.deleteStopwords()
-                    self.t.insert(p.tokens, p.id)
+                    self.invertedIndexTable.insert(p.tokens, p.id)
         finally:
-            self.t.save('../output/table.json')
+            self.invertedIndexTable.save('../output/table.json')
     
     def load(self):
-        self.t.load('tests/test.json')
+        self.invertedIndexTable.load('tests/test.json')
 
 if __name__ == '__main__':
     e = SearchEngine()
