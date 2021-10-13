@@ -2,6 +2,7 @@ import json
 import nltk
 from nltk.stem import WordNetLemmatizer
 import os
+import math
 
 class Preprocessor:
     '''
@@ -60,6 +61,7 @@ class InvertedIndexTable:
         self.universe = set()
     
     def insert(self, tokens, id):
+        self.universe.add(id)
         for token in tokens:
             if self.table.__contains__(token):
                 self.table[token].add(id)
@@ -85,7 +87,37 @@ class InvertedIndexTable:
             for value in self.table.values():
                 for item in value:
                     self.universe.add(item)
-            
+
+    def getIDF(self):
+        IDF = {
+            token : math.log(len(self.universe) / (len(self.table[token]) + 1))
+            for token in self.table.keys()
+        }
+        return IDF
+
+class IndexTable:
+
+    def __init__(self):
+        self.table = {}
+    
+    def insert(self, id, tokens):
+        counter = {}
+        for token in tokens:
+            if counter.__contains__(token):
+                counter[token] += 1
+            else:
+                counter[token] = 1
+        self.table[id] = counter
+
+    def getTF(self):
+        TF = {
+            id : {
+                key : (value / sum(tokens))
+                for (key, value) in tokens
+            } for (id, tokens) in self.table.items()
+        }
+        return TF
+
 class SearchEngine:
 
     def __init__(self):
@@ -104,7 +136,6 @@ class SearchEngine:
                 for file in filelist:
                     fullpath = f'{date}/{file}'
                     print(fullpath)
-                    self.invertedIndexTable.universe.add(fullpath)
                     p.load(fullpath)
                     p.tokenize()
                     p.lemmatize()
