@@ -68,26 +68,6 @@ class InvertedIndexTable:
             else:
                 self.table[token] = {id}
 
-    # def save(self, filename):
-    #     self.table = {
-    #         key : list(sorted(value)) for (key, value) in self.table.items()
-    #     }
-    #     with open(filename, 'w') as f:
-    #         dump = json.dumps(
-    #             self.table,
-    #             sort_keys = True,
-    #             indent = 4,
-    #             separators = (',', ': ')
-    #         )
-    #         f.write(dump)
-    
-    # def load(self, filename):
-    #     with open(filename, 'r', encoding='UTF-8') as f:
-    #         self.table = json.load(f)
-    #         for value in self.table.values():
-    #             for item in value:
-    #                 self.universe.add(item)
-
     def fromIndexTable(self, indexTable):
         self.table = {}
         for (id, tokens) in indexTable.items():
