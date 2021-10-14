@@ -125,7 +125,7 @@ class IndexTable:
         TF = {
             id : {
                 key: value / len(tokens)
-                for (key, value) in Counter(tokens).items()
+                for (key, value) in Counter(sorted(tokens)).items()
             }
             for (id, tokens) in self.table.items()
         }
@@ -164,7 +164,7 @@ class SearchEngine:
             self.invertedIndexTable.save('../output/table.json')
     
     def load(self):
-        self.indexTable.load('tests/test.json')
+        self.indexTable.load('tests/tests.json')
         self.invertedIndexTable.fromIndexTable(self.indexTable.table)
 
 if __name__ == '__main__':
