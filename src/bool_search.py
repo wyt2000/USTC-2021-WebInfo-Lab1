@@ -4,13 +4,7 @@ from boolParser import BoolExpCalculator
 class BoolSearchEngine(SearchEngine, BoolExpCalculator):
 
     def __init__(self, init='load'):
-        SearchEngine.__init__(self)
-        if init == 'generate':
-            self.generate()
-        elif init == 'load':
-            self.load()
-        else:
-            raise ValueError('The argument should be generate or load!')
+        SearchEngine.__init__(self, init)
         BoolExpCalculator.__init__(
             self,
             self.invertedIndexTable.table,

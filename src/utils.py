@@ -3,6 +3,7 @@ import nltk
 from nltk.stem import WordNetLemmatizer
 import os
 import math
+from collections import Counter
 
 class Preprocessor:
     '''
@@ -53,6 +54,11 @@ class Preprocessor:
             token
             for token in self.tokens if token.lower() not in self.stopwords
         ]
+    
+    def preprocess(self):
+        self.tokenize()
+        self.lemmatize()
+        self.deleteStopwords()
 
 class InvertedIndexTable:
     
@@ -99,13 +105,7 @@ class IndexTable:
         self.table = {}
     
     def insert(self, id, tokens):
-        counter = {}
-        for token in tokens:
-            if counter.__contains__(token):
-                counter[token] += 1
-            else:
-                counter[token] = 1
-        self.table[id] = counter
+        self.table[id] = tokens
 
     def save(self, filename):
         with open(filename, 'w') as f:
@@ -124,17 +124,24 @@ class IndexTable:
     def getTF(self):
         TF = {
             id : {
-                key : (value / sum(tokens))
-                for (key, value) in tokens
-            } for (id, tokens) in self.table.items()
+                key: value / len(tokens)
+                for (key, value) in Counter(tokens).items()
+            }
+            for (id, tokens) in self.table.items()
         }
         return TF
 
 class SearchEngine:
 
-    def __init__(self):
+    def __init__(self, init='load'):
         self.indexTable = IndexTable()
         self.invertedIndexTable = InvertedIndexTable()
+        if init == 'generate':
+            self.generate()
+        elif init == 'load':
+            self.load()
+        else:
+            raise ValueError('The argument should be generate or load!')
     
     def generate(self):
         p = Preprocessor()
@@ -150,19 +157,15 @@ class SearchEngine:
                     fullpath = f'{date}/{file}'
                     print(fullpath)
                     p.load(fullpath)
-                    p.tokenize()
-                    p.lemmatize()
-                    p.deleteStopwords()
+                    p.preprocess()
                     self.indexTable.insert(p.id, p.tokens)
                     self.invertedIndexTable.insert(p.tokens, p.id)
         finally:
             self.invertedIndexTable.save('../output/table.json')
     
     def load(self):
-        self.indexTable.load('../output/table.json')
+        self.indexTable.load('tests/test.json')
         self.invertedIndexTable.fromIndexTable(self.indexTable.table)
 
 if __name__ == '__main__':
-    e = SearchEngine()
-    e.load()
-    e.generate()
+    e = SearchEngine('load')
