@@ -62,7 +62,8 @@ class SemanticSearchEngine(SearchEngine):
             for (key, value) in Counter(tokens).items()
         }
         searchVec = {
-            token : tf * self.IDF[token]
+            token : tf * self.IDF[token] if self.IDF.__contains__(token) 
+            else tf * math.log(len(self.invertedIndexTable.universe))
             for (token, tf) in TF.items()
         }
         similarities = {

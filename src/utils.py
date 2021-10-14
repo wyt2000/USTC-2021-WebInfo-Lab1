@@ -77,7 +77,7 @@ class InvertedIndexTable:
     def fromIndexTable(self, indexTable):
         self.table = {}
         for (id, tokens) in indexTable.items():
-                self.insert(tokens.keys(), id)
+                self.insert(tokens, id)
 
     def save(self, filename):
         self.table = {
@@ -86,9 +86,9 @@ class InvertedIndexTable:
         with open(filename, 'w') as f:
             dump = json.dumps(
                 self.table,
-                sort_keys=True,
-                indent=4,
-                separators=(',', ': ')
+                sort_keys = True,
+                indent = 4,
+                separators = (',', ': ')
             )
             f.write(dump)
 
@@ -164,7 +164,7 @@ class SearchEngine:
             self.invertedIndexTable.save('../output/table.json')
     
     def load(self):
-        self.indexTable.load('tests/tests.json')
+        self.indexTable.load('tests/semantic-tests.json')
         self.invertedIndexTable.fromIndexTable(self.indexTable.table)
 
 if __name__ == '__main__':
