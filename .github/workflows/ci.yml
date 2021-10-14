@@ -34,6 +34,6 @@ jobs:
     - name: Bool Tests
       run: |
         pytest tests/bool-tests.py
-    - name: Bool Tests
+    - name: Semantic Tests
       run: |
         pytest tests/semantic-tests.py
