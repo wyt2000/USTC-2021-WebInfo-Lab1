@@ -94,7 +94,7 @@ class InvertedIndexTable:
 
     def getIDF(self):
         IDF = {
-            token : math.log(len(self.universe) / (len(self.table[token]) + 1))
+            token : math.log10(len(self.universe) / (len(self.table[token]) + 1))
             for token in self.table.keys()
         }
         return IDF
@@ -133,13 +133,13 @@ class IndexTable:
 
 class SearchEngine:
 
-    def __init__(self, init='load'):
+    def __init__(self, init='load', filename='tests/semantic-tests.json'):
         self.indexTable = IndexTable()
         self.invertedIndexTable = InvertedIndexTable()
         if init == 'generate':
             self.generate()
         elif init == 'load':
-            self.load()
+            self.load(filename)
         else:
             raise ValueError('The argument should be generate or load!')
     
@@ -161,11 +161,12 @@ class SearchEngine:
                     self.indexTable.insert(p.id, p.tokens)
                     self.invertedIndexTable.insert(p.tokens, p.id)
         finally:
-            self.invertedIndexTable.save('../output/table.json')
+            self.invertedIndexTable.save('output/table.json')
     
-    def load(self):
-        self.indexTable.load('tests/semantic-tests.json')
+    def load(self, filename):
+        self.indexTable.load(filename)
         self.invertedIndexTable.fromIndexTable(self.indexTable.table)
 
 if __name__ == '__main__':
     e = SearchEngine('load')
+    e.invertedIndexTable.save('output/table.json')

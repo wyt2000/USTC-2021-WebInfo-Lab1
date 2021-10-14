@@ -3,8 +3,8 @@ from boolParser import BoolExpCalculator
 
 class BoolSearchEngine(SearchEngine, BoolExpCalculator):
 
-    def __init__(self, init='load'):
-        SearchEngine.__init__(self, init)
+    def __init__(self, init='load', filename='tests/bool-tests.json'):
+        SearchEngine.__init__(self, init, filename)
         BoolExpCalculator.__init__(
             self,
             self.invertedIndexTable.table,

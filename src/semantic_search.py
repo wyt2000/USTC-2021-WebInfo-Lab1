@@ -2,11 +2,12 @@ from utils import SearchEngine, Preprocessor
 from collections import Counter
 import math
 import heapq
+import json
 
 class SemanticSearchEngine(SearchEngine):
     
-    def __init__(self, init='load'):
-        SearchEngine.__init__(self, init)
+    def __init__(self, init='load', filename='tests/semantic-tests.json'):
+        SearchEngine.__init__(self, init, filename)
         self.TF = self.indexTable.getTF()
         self.IDF = self.invertedIndexTable.getIDF()
         self.TFIDF = {
@@ -16,6 +17,16 @@ class SemanticSearchEngine(SearchEngine):
             }
             for (id, TF) in self.TF.items()
         }
+
+    def save(self, filename):
+        with open(filename, 'w') as f:
+            dump = json.dumps(
+                self.TFIDF,
+                sort_keys=True,
+                indent=4,
+                separators=(',', ': ')
+            )
+            f.write(dump)
 
     def norm(self, vec):
         return math.sqrt(
@@ -63,7 +74,7 @@ class SemanticSearchEngine(SearchEngine):
         }
         searchVec = {
             token : tf * self.IDF[token] if self.IDF.__contains__(token) 
-            else tf * math.log(len(self.invertedIndexTable.universe))
+            else tf * math.log10(len(self.invertedIndexTable.universe))
             for (token, tf) in TF.items()
         }
         similarities = {
@@ -75,9 +86,7 @@ class SemanticSearchEngine(SearchEngine):
             self.dict2list(similarities),
             key=lambda a: (a[1], a[0])
         )
-
-
+    
 if __name__ == '__main__':
     e = SemanticSearchEngine()
-    t = e.search('home shopping')
-    print(t)
+    e.save('output/tfidf.json')

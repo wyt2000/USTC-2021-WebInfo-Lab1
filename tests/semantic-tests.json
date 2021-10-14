@@ -8,14 +8,17 @@
     ],
     "3": [
         "home",
-        "shopping",
+        "home",
         "center"
     ],
     "4": [
-        "shopping",
-        "center"
+        "shopping"
     ],
     "5": [
         "center"
+    ],
+    "6": [
+        "show",
+        "home"
     ]
 }
